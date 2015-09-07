@@ -35,15 +35,6 @@ namespace meteorpp {
         public:
         typedef boost::signals2::signal<void()> ready_signal;
 
-        ddp_collection(std::string const& name) throw(ejdb_exception, websocketpp::exception);
-
-        template<typename ...Args>
-        ddp_collection(std::string const& name, Args&&... args) throw(ejdb_exception, websocketpp::exception)
-            : collection(name), _name(name), _ddp(ddp::_().shared_from_this())
-        {
-            init_ddp_collection(name, { std::forward<Args>(args)... });
-        }
-
         template<typename ...Args>
         ddp_collection(std::shared_ptr<ddp> const& ddp, std::string const& name, Args&&... args) throw(ejdb_exception, websocketpp::exception)
             : collection(name), _name(name), _ddp(ddp)

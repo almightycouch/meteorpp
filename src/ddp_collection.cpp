@@ -26,12 +26,6 @@
 #include "../include/meteorpp/ddp_collection.hpp"
 
 namespace meteorpp {
-    ddp_collection::ddp_collection(std::string const& name) throw(ejdb_exception, websocketpp::exception)
-        : collection(name), _name(name), _ddp(ddp::_().shared_from_this())
-    {
-        init_ddp_collection(name);
-    }
-
     ddp_collection::~ddp_collection()
     {
         _ddp->unsubscribe(_subscription);

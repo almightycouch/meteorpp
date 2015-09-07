@@ -31,10 +31,8 @@
 #include <websocketpp/client.hpp>
 #include <websocketpp/config/asio_no_tls.hpp>
 
-#include "lazy_init.hpp"
-
 namespace meteorpp {
-    class ddp : public singleton<ddp>
+    class ddp
     {
         typedef websocketpp::client<websocketpp::config::asio> client;
 
