@@ -45,7 +45,7 @@ namespace meteorpp {
         return _results;
     }
 
-    boost::signals2::connection live_query::on_updated(updated_signal::slot_type const& slot)
+    boost::signals2::connection live_query::on_changed(updated_signal::slot_type const& slot)
     {
         return _updated_sig.connect(slot);
     }

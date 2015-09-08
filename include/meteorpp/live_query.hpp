@@ -38,7 +38,7 @@ namespace meteorpp {
 
         nlohmann::json const& data() const;
 
-        boost::signals2::connection on_updated(updated_signal::slot_type const& slot);
+        boost::signals2::connection on_changed(updated_signal::slot_type const& slot);
 
         boost::signals2::connection on_document_added(collection::document_added_signal::slot_type const& slot);
 

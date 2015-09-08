@@ -100,7 +100,7 @@ int main(int argc, char** argv)
         coll = std::make_shared<meteorpp::ddp_collection>(ddp, "test");
         coll->on_ready([&]() {
             live_query = coll->track({{ "foo", "bar" }});
-            live_query->on_updated(std::bind(print_live_query, live_query));
+            live_query->on_changed(std::bind(print_live_query, live_query));
             print_live_query(live_query);
         });
     });
