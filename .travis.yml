@@ -14,7 +14,7 @@ before_install:
     - brew outdated boost || brew upgrade boost
     - pip install --user git+git://github.com/eddyxu/cpp-coveralls.git
 
-script:
+before_script:
     - cd ejdb
     - mkdir build
     - cd build
@@ -22,11 +22,16 @@ script:
     - make
     - make install
     - cd ../../
+
+script:
     - mkdir build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
     - make
-    - cd ../
 
 after_success:
+    - make clean
+    - touch ../include/meteorpp/*.hpp
+    - make tests CXXFLAGS="-std=c++11 -fprofile-arcs -ftest-coverage"
+    - cd ../
     - coveralls --exclude ejd --gcov-options '\-lp'
