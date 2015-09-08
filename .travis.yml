@@ -10,8 +10,9 @@ env:
     - CMAKE_BUILD_TYPE="Debug"
     - CMAKE_BUILD_TYPE="Release"
 
-before_script:
+before_install:
     - brew outdated boost || brew upgrade boost
+    - pip install --user git+git://github.com/eddyxu/cpp-coveralls.git
 
 script:
     - cd ejdb
@@ -20,8 +21,12 @@ script:
     - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
     - make
     - make install
-    - cd ../..
+    - cd ../../
     - mkdir build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
     - make
+    - cd ../
+
+after_success:
+    - coveralls --exclude ejd --gcov-options '\-lp'
