@@ -2,7 +2,7 @@ Meteor++
 ========
 
 [![Build Status](https://travis-ci.org/almightycouch/meteorpp.svg?branch=master)](https://travis-ci.org/almightycouch/meteorpp)
-[![Coverage Status](https://img.shields.io/coveralls/almightycouch/meteorpp.svg)](https://coveralls.io/r/almightycouch/meteorpp)
+[![Coverage Status](https://coveralls.io/repos/almightycouch/meteorpp/badge.svg?branch=master&service=github)](https://coveralls.io/github/almightycouch/meteorpp)
 [![Github Releases](https://img.shields.io/github/release/almightycouch/meteorpp.svg)](https://github.com/almightycouch/meteorpp/releases)
 [![Documentation Status](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://almightycouch.github.io/meteorpp)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/almightycouch/meteorpp/master/LICENSE)
@@ -16,6 +16,7 @@ With this library you can:
 * subscribe to real-time feeds, track changes and observe specific queries
 * call server-side methods, query and modify collections
 * keep your data mirrored and simulate server operations (latency compensation)
+
 
 Quick Start
 ------------
@@ -108,6 +109,7 @@ int main(int argc, char** argv)
     return 0;
 }
 ```
+
 
 License & Warranty
 ------------------
