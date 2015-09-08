@@ -1,0 +1,16 @@
+language: cpp
+
+compiler:
+    - clang
+
+os:
+    - osx
+
+before_script:
+    - brew update
+    - brew outdated boost || brew upgrade boost
+    - mkdir build
+    - cd build
+    - cmake ..
+
+script: make
