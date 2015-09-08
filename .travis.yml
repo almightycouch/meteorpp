@@ -6,11 +6,22 @@ compiler:
 os:
     - osx
 
+env:
+    - CMAKE_BUILD_TYPE="Debug"
+    - CMAKE_BUILD_TYPE="Release"
+
 before_script:
-    - brew update
     - brew outdated boost || brew upgrade boost
+
+script:
+    - cd ejdb
     - mkdir build
     - cd build
-    - cmake ..
-
-script: make
+    - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
+    - make
+    - make install
+    - cd ../..
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
+    - make
