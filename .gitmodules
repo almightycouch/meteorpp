@@ -1,0 +1,4 @@
+[submodule "ejdb"]
+	path = ejdb
+	url = https://github.com/almightycouch/ejdb.git
+	branch = meteorpp
