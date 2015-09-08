@@ -55,7 +55,7 @@ namespace meteorpp {
         void on_ready(ready_signal::slot_type const& slot);
 
         private:
-        void init_ddp_collection(std::string const& name, nlohmann::json::array_t const& params = {}) throw(websocketpp::exception);
+        void init_ddp_collection(std::string const& name, nlohmann::json::array_t const& params = nlohmann::json::array()) throw(websocketpp::exception);
 
         void commit_insert(std::string const& id, nlohmann::json::object_t const& fields);
 

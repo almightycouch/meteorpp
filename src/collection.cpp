@@ -87,7 +87,7 @@ namespace meteorpp {
 
     nlohmann::json::object_t collection::find_one(nlohmann::json::object_t const& selector) throw(std::runtime_error)
     {
-        auto results = query(selector, {}, JBQRYFINDONE);
+        auto results = query(selector, nlohmann::json::object(), JBQRYFINDONE);
         return results.size() ? results[0] : nlohmann::json::object();
     }
 

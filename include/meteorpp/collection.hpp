@@ -42,9 +42,9 @@ namespace meteorpp {
         typedef boost::signals2::signal<void(std::string const& id, nlohmann::json::object_t const& fields, std::vector<std::string> const& cleared)> document_changed_signal;
         typedef boost::signals2::signal<void(std::string const& id)> document_removed_signal;
 
-        virtual std::vector<nlohmann::json::object_t> find(nlohmann::json::object_t const& selector = {}) throw(std::runtime_error) = 0;
+        virtual std::vector<nlohmann::json::object_t> find(nlohmann::json::object_t const& selector = nlohmann::json::object()) throw(std::runtime_error) = 0;
 
-        virtual nlohmann::json::object_t find_one(nlohmann::json::object_t const& selector = {}) throw(std::runtime_error) = 0;
+        virtual nlohmann::json::object_t find_one(nlohmann::json::object_t const& selector = nlohmann::json::object()) throw(std::runtime_error) = 0;
 
         virtual std::string insert(nlohmann::json::object_t const& document) throw(std::runtime_error) = 0;
 
@@ -87,11 +87,11 @@ namespace meteorpp {
 
         virtual ~collection();
 
-        std::shared_ptr<live_query> track(nlohmann::json::object_t const& selector = {}) throw(std::bad_weak_ptr);
+        std::shared_ptr<live_query> track(nlohmann::json::object_t const& selector = nlohmann::json::object()) throw(std::bad_weak_ptr);
 
-        std::vector<nlohmann::json::object_t> find(nlohmann::json::object_t const& selector = {}) throw(std::runtime_error);
+        std::vector<nlohmann::json::object_t> find(nlohmann::json::object_t const& selector = nlohmann::json::object()) throw(std::runtime_error);
 
-        nlohmann::json::object_t find_one(nlohmann::json::object_t const& selector = {}) throw(std::runtime_error);
+        nlohmann::json::object_t find_one(nlohmann::json::object_t const& selector = nlohmann::json::object()) throw(std::runtime_error);
 
         virtual std::string insert(nlohmann::json::object_t const& document) throw(std::runtime_error);
 
@@ -102,7 +102,7 @@ namespace meteorpp {
         virtual int remove(nlohmann::json::object_t const& selector) throw(std::runtime_error);
 
         protected:
-        nlohmann::json query(nlohmann::json::object_t const& selector, nlohmann::json::object_t const& modifier = {}, int flags = 0) throw(ejdb_exception);
+        nlohmann::json query(nlohmann::json::object_t const& selector, nlohmann::json::object_t const& modifier = nlohmann::json::object(), int flags = 0) throw(ejdb_exception);
 
         nlohmann::json evaluate_log(std::string const& log);
 

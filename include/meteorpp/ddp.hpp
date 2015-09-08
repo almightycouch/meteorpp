@@ -53,9 +53,9 @@ namespace meteorpp {
 
         void connect(std::string const& url = "ws://locahost:3000/websocket", connected_signal::slot_type const& slot = connected_signal::slot_function_type()) throw(websocketpp::exception);
 
-        std::string call_method(std::string const& name, nlohmann::json::array_t const& params = {}, method_result_signal::slot_type const& slot = method_result_signal::slot_function_type()) throw(websocketpp::exception);
+        std::string call_method(std::string const& name, nlohmann::json::array_t const& params = nlohmann::json::array(), method_result_signal::slot_type const& slot = method_result_signal::slot_function_type()) throw(websocketpp::exception);
 
-        std::string subscribe(std::string const& name, nlohmann::json::array_t const& params = {}, ready_signal::slot_type const& slot = ready_signal::slot_function_type()) throw(websocketpp::exception);
+        std::string subscribe(std::string const& name, nlohmann::json::array_t const& params = nlohmann::json::array(), ready_signal::slot_type const& slot = ready_signal::slot_function_type()) throw(websocketpp::exception);
 
         void unsubscribe(std::string const& id) throw(websocketpp::exception);
 
