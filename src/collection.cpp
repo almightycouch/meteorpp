@@ -21,6 +21,8 @@
  *
  */
 
+#include <mutex>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/hex.hpp>
 
