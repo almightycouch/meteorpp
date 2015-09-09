@@ -11,7 +11,7 @@ struct fixture {
 
 BOOST_AUTO_TEST_CASE(create_collection)
 {
-    BOOST_REQUIRE_NO_THROW(std::make_shared<meteorpp::collection>("test"));
+    BOOST_CHECK_NO_THROW(std::make_shared<meteorpp::collection>("test"));
 }
 
 BOOST_AUTO_TEST_CASE(create_invalid_collection)
@@ -29,6 +29,26 @@ BOOST_FIXTURE_TEST_CASE(insert_with_invalid_oid, fixture)
 {
     std::string const oid = "0xe5505";
     BOOST_CHECK_THROW(coll->insert({{ "_id", oid }, { "foo", "bar" }}), meteorpp::ejdb_exception);
+}
+
+BOOST_FIXTURE_TEST_CASE(insert_count, fixture)
+{
+    for(auto i = 1; i <= 10; ++i) {
+        coll->insert({{ "foo", "bar" }});
+        BOOST_CHECK_EQUAL(coll->count(), i);
+    }
+}
+
+BOOST_FIXTURE_TEST_CASE(insert_count_with_query, fixture)
+{
+    coll->insert({{ "foo", "bar"}});
+    coll->insert({{ "foo", "baz"}});
+    coll->insert({{ "foo", "bar"}, { "bar", "foo" }});
+    coll->insert({{ "foo", "baz"}, { "bar", "foo" }});
+
+    BOOST_CHECK_EQUAL(coll->count({{ "foo", "bar" }}), 2);
+    BOOST_CHECK_EQUAL(coll->count({{ "foo", "baz" }}), 2);
+    BOOST_CHECK_EQUAL(coll->count({{ "bar", "foo" }}), 2);
 }
 
 BOOST_FIXTURE_TEST_CASE(insert_find_one, fixture)

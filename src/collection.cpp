@@ -87,6 +87,11 @@ namespace meteorpp {
         return std::make_shared<live_query>(selector, shared_from_this());
     }
 
+    int collection::count(nlohmann::json::object_t const& selector) throw(std::runtime_error)
+    {
+        return query(selector, nlohmann::json::object(), JBQRYCOUNT);
+    }
+
     std::vector<nlohmann::json::object_t> collection::find(nlohmann::json::object_t const& selector) throw(std::runtime_error)
     {
         return query(selector);
@@ -94,8 +99,7 @@ namespace meteorpp {
 
     nlohmann::json::object_t collection::find_one(nlohmann::json::object_t const& selector) throw(std::runtime_error)
     {
-        auto results = query(selector, nlohmann::json::object(), JBQRYFINDONE);
-        return results.size() ? results[0] : nlohmann::json::object();
+        return query(selector, nlohmann::json::object(), JBQRYFINDONE);
     }
 
     std::string collection::insert(nlohmann::json::object_t const& document) throw(std::runtime_error)
@@ -170,7 +174,7 @@ namespace meteorpp {
         nlohmann::json upserts;
         nlohmann::json dropall;
         nlohmann::json const json_log = evaluate_log(std::string(log->ptr, log->size));
-        if(json_log["updating_mode"]) {
+        if(json_log.find("updating_mode") != json_log.end() && json_log["updating_mode"]) {
             if(json_log.find("$update") != json_log.end()) {
                 updates = json_log["$update"];
                 if(updates.type() != nlohmann::json::value_t::array) {
@@ -224,6 +228,10 @@ namespace meteorpp {
             }
             ejdbqresultdispose(cursor);
             return_val = results;
+        }
+
+        if(flags & JBQRYFINDONE) {
+            return_val = return_val.empty() ? nlohmann::json::object() : return_val[0];
         }
 
         return return_val;
