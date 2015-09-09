@@ -10,6 +10,7 @@ project(${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 if(APPLE)
     set(CMAKE_MACOSX_RPATH 0)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl")
@@ -24,9 +25,20 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # sources
 file(GLOB METEORPP_SRC "${PROJECT_SOURCE_DIR}/src/*.cpp")
+file(GLOB METEORPP_UNITTEST_SRC "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
 # create libmeteorpp
 add_library(meteorpp SHARED ${METEORPP_SRC})
 
-# link with boost_random, boost_system & ejdb
+# link against boost_random, boost_system & ejdb
 target_link_libraries(meteorpp ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
+
+#create unit tests
+add_executable(tests EXCLUDE_FROM_ALL ${METEORPP_SRC} ${METEORPP_UNITTEST_SRC})
+
+# link against boost_random, boost_system & ejdb
+target_link_libraries(tests ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
+
+# compile with profiling and coverage flags
+set_target_properties(tests PROPERTIES COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
+set_target_properties(tests PROPERTIES    LINK_FLAGS "-fprofile-arcs -ftest-coverage")

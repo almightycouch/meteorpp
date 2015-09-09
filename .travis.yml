@@ -15,9 +15,9 @@ before_install:
     - pip install --user git+git://github.com/eddyxu/cpp-coveralls.git
 
 before_script:
-    - cd ejdb
+    - cd ejdb/
     - mkdir build
-    - cd build
+    - cd build/
     - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
     - make
     - make install
@@ -25,13 +25,12 @@ before_script:
 
 script:
     - mkdir build
-    - cd build
+    - cd build/
     - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
     - make
 
 after_success:
-    - make clean
-    - touch ../include/meteorpp/*.hpp
-    - make tests CXXFLAGS="-std=c++11 -fprofile-arcs -ftest-coverage"
+    - make tests
+    - ./tests
     - cd ../
-    - coveralls --exclude ejd --gcov-options '\-lp'
+    - coveralls --exclude ejd/ --gcov-options '\-lp'
