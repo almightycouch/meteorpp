@@ -58,6 +58,10 @@ namespace meteorpp {
 
     collection::collection(std::string const& name) throw(ejdb_exception)
     {
+        if(name.empty()) {
+            throw ejdb_exception(JBEINVALIDCOLNAME);
+        }
+
         std::call_once(bson_oid_setup_flag, std::bind(bson_set_oid_inc, []() -> int {
             return 0xcafed00d;
         }));
@@ -97,7 +101,11 @@ namespace meteorpp {
 
         std::shared_ptr<bson> bson_doc = convert_to_bson(document);
         if(document.find("_id") != document.end()) {
-            bson_oid_from_string(&oid, document.find("_id")->second.get<std::string>().c_str());
+            std::string const &id = document.find("_id")->second;
+            if(!ejdbisvalidoidstr(id.c_str())) {
+                throw ejdb_exception(JBEINVALIDBSONPK);
+            }
+            bson_oid_from_string(&oid, id.c_str());
             std::shared_ptr<bson> bson_oid(bson_create(), bson_del);
             bson_init(bson_oid.get());
             bson_append_oid(bson_oid.get(), "_id", &oid);
