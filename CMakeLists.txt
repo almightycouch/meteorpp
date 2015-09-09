@@ -9,16 +9,23 @@ set(PROJECT_MAINTAINER "Mario Flach <m.flach@almightycouch.org>")
 project(${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+include(FindPkgConfig)
+set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/ejdb/dist/lib/pkgconfig" )
 
 if(APPLE)
     set(CMAKE_MACOSX_RPATH 0)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl")
 endif()
 
-# third-party libraries
+# load boost libraries from system
 find_package(Boost COMPONENTS random system REQUIRED)
-find_package(Ejdb REQUIRED)
+
+# load libejdb from submodule
+pkg_check_modules(Ejdb REQUIRED libejdb)
+
+# libejdb library path
+link_directories(${Ejdb_LIBRARY_DIRS})
 
 # third-party include dirs
 include_directories(${Boost_INCLUDE_DIRS} ${Ejdb_INCLUDE_DIRS})
