@@ -65,7 +65,8 @@ namespace meteorpp {
         }
 
         std::call_once(bson_oid_setup_flag, std::bind(bson_set_oid_inc, []() -> int {
-            return 0xcafed00d;
+            static int i = 0;
+            return i++;
         }));
         if(!(_db = db.lock())) {
             _db = std::shared_ptr<EJDB>(ejdbnew(), ejdbdel);
