@@ -1,35 +1,46 @@
 language: cpp
 
+sudo: false
+
 matrix:
     include:
-        - os: linux
-          compiler: gcc
-          env: CMAKE_BUILD_TYPE="Debug"
-          before_install:
-              - sudo apt-get install libboost-all-dev
-              - sudo pip install cpp-coveralls
-          after_success:
-              - make tests
-              - ./tests
-              - cd ../
-              - coveralls -i src/ -i include/meteorpp/ --gcov-options '\-lp'
         - os: osx
           compiler: clang
           env: CMAKE_BUILD_TYPE="Debug"
           before_install:
               - brew outdated boost || brew upgrade boost
+        - os: linux
+          compiler: gcc
+          env: CMAKE_BUILD_TYPE="Debug"
+          before_script:
+              - export CXX="g++-4.9"
+          after_success:
+              - make tests
+              - ./tests
+              - cd ../
+              - pip install --user git+git://github.com/eddyxu/cpp-coveralls.git
+              - coveralls -i src/ -i include/meteorpp/ --gcov-options '\-lp'
+          addons:
+              apt:
+                  sources:
+                      - boost-latest
+                      - ubuntu-toolchain-r-test
+                  packages:
+                      - g++-4.9
+                      - libboost1.55-dev
+                      - libboost-random1.55-dev
+                      - libboost-system1.55-dev
+                      - libboost-test1.55-dev
 
 
-before_script:
+script:
     - cd ejdb/
     - mkdir build
     - cd build/
-    - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../
+    - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=../dist ../
     - make
-    - sudo make install
+    - make install
     - cd ../../
-
-script:
     - mkdir build
     - cd build/
     - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../

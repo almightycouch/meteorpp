@@ -20,7 +20,10 @@ endif()
 find_package(Boost COMPONENTS random system REQUIRED)
 find_package(Ejdb REQUIRED)
 
-# include dirs
+# third-party include dirs
+include_directories(${Boost_INCLUDE_DIRS} ${Ejdb_INCLUDE_DIRS})
+
+# meteorpp include dirs
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # sources
