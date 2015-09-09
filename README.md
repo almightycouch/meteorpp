@@ -53,7 +53,7 @@ The library is written in modern C++. It depends on following third-party librar
 * [EJDB][] <sup id="a1">[patch](#f1)</sup>, a MongoDB engine written in C
 * Zaphoyd's websocket implementation, [WebSocket++][]
 
-Most of these libraries are header-only and do not require any specific installation. You must install `boost_random`, `boost_system` and `ejdb` to successfully build Meteor++.
+Most of these libraries are header-only and do not require any specific installation. However, You must install `boost_random`, `boost_system` and `ejdb` to successfully build Meteor++.
 
 > In order to support features such as latency compensation and atomic operations, some files in the [EJDB][] library must be patched.
 > You can get the patch to apply</em> [here][patch]. <sup id="f1">[↩](#a1)</sup>
