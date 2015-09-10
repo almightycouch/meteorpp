@@ -24,13 +24,13 @@ Quick Start
 Install Meteor++:
 
     git clone git://github.com/almightycouch/meteorpp.git
+    cd meteorpp/build/
     cmake .
     make
-    make install
 
 Run the examples:
 
-    meteorpp localhost:3000 test
+    ddp-monitor test
 
 Intregrate the library to your project and enjoy the power of Meteor with the speed of C++.
 

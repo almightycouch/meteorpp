@@ -8,12 +8,15 @@ set(PROJECT_MAINTAINER "Mario Flach <m.flach@almightycouch.org>")
 
 project(${PROJECT_NAME})
 
+# set c++11 support
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+# uses pkg-config to load ejdb from git submodule
 include(FindPkgConfig)
 set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/ejdb/dist/lib/pkgconfig" )
 
 if(APPLE)
+    # remove policy warning on osx
     set(CMAKE_MACOSX_RPATH 0)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl")
 endif()
@@ -21,7 +24,7 @@ endif()
 # load boost libraries from system
 find_package(Boost COMPONENTS random system REQUIRED)
 
-# load libejdb from submodule
+# load libejdb from git submodule
 pkg_check_modules(Ejdb REQUIRED libejdb)
 
 # libejdb library path
@@ -52,3 +55,12 @@ target_link_libraries(tests ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
 # compile with profiling and coverage flags
 set_target_properties(tests PROPERTIES COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
 set_target_properties(tests PROPERTIES    LINK_FLAGS "-fprofile-arcs -ftest-coverage")
+
+# load boost program_options
+find_package(Boost COMPONENTS program_options)
+
+if(${Boost_FOUND})
+    # compile ddp-monitor and link against libmeteorpp
+    add_executable(ddp-monitor "${PROJECT_SOURCE_DIR}/examples/ddp_monitor.cpp")
+    target_link_libraries(ddp-monitor meteorpp ${Boost_LIBRARIES})
+endif()
