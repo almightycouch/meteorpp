@@ -49,6 +49,8 @@ BOOST_FIXTURE_TEST_CASE(insert_count_with_query, fixture)
     BOOST_CHECK_EQUAL(coll->count({{ "foo", "bar" }}), 2);
     BOOST_CHECK_EQUAL(coll->count({{ "foo", "baz" }}), 2);
     BOOST_CHECK_EQUAL(coll->count({{ "bar", "foo" }}), 2);
+    BOOST_CHECK_EQUAL(coll->count({{ "foo", "bar" }, { "bar", "foo" }}), 1);
+    BOOST_CHECK_EQUAL(coll->count({{ "$or", { {{ "foo", "bar"}}, {{ "bar", "foo" }} } }}), 3);
 }
 
 BOOST_FIXTURE_TEST_CASE(insert_find_one, fixture)

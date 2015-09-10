@@ -53,8 +53,8 @@ add_executable(tests EXCLUDE_FROM_ALL ${METEORPP_SRC} ${METEORPP_UNITTEST_SRC})
 target_link_libraries(tests ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
 
 # compile with profiling and coverage flags
-set_target_properties(tests PROPERTIES COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
-set_target_properties(tests PROPERTIES    LINK_FLAGS "-fprofile-arcs -ftest-coverage")
+# set_target_properties(tests PROPERTIES COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
+# set_target_properties(tests PROPERTIES    LINK_FLAGS "-fprofile-arcs -ftest-coverage")
 
 # load boost program_options
 find_package(Boost COMPONENTS program_options)
