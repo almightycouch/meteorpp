@@ -28,6 +28,7 @@ matrix:
                   packages:
                       - g++-4.9
                       - libboost1.55-dev
+                      - libboost-program-options1.55-dev
                       - libboost-random1.55-dev
                       - libboost-system1.55-dev
                       - libboost-test1.55-dev
