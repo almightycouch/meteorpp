@@ -15,6 +15,7 @@ namespace boost {
 
 void print_live_query(std::shared_ptr<meteorpp::live_query> const& live_query)
 {
+    std::system("clear");
     std::cout << live_query->data().dump(4) << std::endl;
 }
 
