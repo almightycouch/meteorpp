@@ -42,6 +42,13 @@ namespace meteorpp {
             init_ddp_collection(name, { std::forward<Args>(args)... });
         }
 
+        template<typename ...Args>
+        ddp_collection(std::shared_ptr<ddp> const& ddp, std::pair<std::string, std::string> const& name_pair, Args&&... args) throw(ejdb_exception, websocketpp::exception)
+            : collection(name_pair.first), _name(name_pair.first), _ddp(ddp)
+        {
+            init_ddp_collection(name_pair.second, { std::forward<Args>(args)... });
+        }
+
         virtual ~ddp_collection();
 
         virtual std::string insert(nlohmann::json::object_t const& document) throw(std::runtime_error);
