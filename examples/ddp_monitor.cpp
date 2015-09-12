@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 
         boost::asio::io_service io;
 
-        auto url = cli.count("ws") ? cli["ws"].as<std::string>() : "ws://locahost:3000/websocket";
+        auto url = cli.count("ws") ? cli["ws"].as<std::string>() : "ws://localhost:3000/websocket";
         auto ddp = std::make_shared<meteorpp::ddp>(io);
         ddp->connect(url, [&](std::string const& session) {
             coll = std::make_shared<meteorpp::ddp_collection>(ddp, cli["name"].as<std::string>());
