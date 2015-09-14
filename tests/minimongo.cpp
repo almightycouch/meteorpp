@@ -1,8 +1,7 @@
-#define BOOST_TEST_MODULE minimongo
-
-#include <boost/test/included/unit_test.hpp>
+#include <set>
 
 #include <meteorpp/collection.hpp>
+#include <boost/test/unit_test.hpp>
 
 struct fixture {
     fixture() : coll(std::make_shared<meteorpp::collection>("test")) {}

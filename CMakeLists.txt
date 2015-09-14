@@ -46,21 +46,25 @@ add_library(meteorpp SHARED ${METEORPP_SRC})
 # link against boost_random, boost_system & ejdb
 target_link_libraries(meteorpp ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
 
-#create unit tests
-add_executable(tests EXCLUDE_FROM_ALL ${METEORPP_SRC} ${METEORPP_UNITTEST_SRC})
+find_package(Boost COMPONENTS random system test_exec_monitor REQUIRED)
+if(${Boost_FOUND})
+    #create unit tests
+    add_executable(tests EXCLUDE_FROM_ALL ${METEORPP_SRC} ${METEORPP_UNITTEST_SRC})
 
-# link against boost_random, boost_system & ejdb
-target_link_libraries(tests ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
+    # link against boost_random, boost_system boost_test_execu_monitor & ejdb
+    target_link_libraries(tests ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
 
-# compile with profiling and coverage flags
-# set_target_properties(tests PROPERTIES COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
-# set_target_properties(tests PROPERTIES    LINK_FLAGS "-fprofile-arcs -ftest-coverage")
+    # compile with profiling and coverage flags
+    set_target_properties(tests PROPERTIES COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
+    set_target_properties(tests PROPERTIES    LINK_FLAGS "-fprofile-arcs -ftest-coverage")
+endif()
 
 # load boost program_options
 find_package(Boost COMPONENTS program_options)
-
 if(${Boost_FOUND})
-    # compile ddp-monitor and link against libmeteorpp
+    # create ddp-monitor executable
     add_executable(ddp-monitor "${PROJECT_SOURCE_DIR}/examples/ddp_monitor.cpp")
+
+    # link against libmeteorpp and boost_program_options
     target_link_libraries(ddp-monitor meteorpp ${Boost_LIBRARIES})
 endif()
