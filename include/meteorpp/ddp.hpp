@@ -45,18 +45,30 @@ namespace meteorpp {
         typedef boost::signals2::signal<void(std::string const& collection, std::string const& id, nlohmann::json::object_t const& fields, std::vector<std::string> const& cleared)> document_changed_signal;
         typedef boost::signals2::signal<void(std::string const& collection, std::string const& id)> document_removed_signal;
 
+        /* Constructs a ddp object.
+         */
         ddp(boost::asio::io_service& io_service, std::string const& session = std::string());
 
         virtual ~ddp();
 
+        /* Returns the current session id.
+         */
         std::string session() const;
 
+        /* Attempts to establish a WebSocket connection to a Meteor app.
+         */
         void connect(std::string const& url = "ws://locahost:3000/websocket", connected_signal::slot_type const& slot = connected_signal::slot_function_type()) throw(websocketpp::exception);
 
+        /* Invokes a server method passing any number of arguments.
+         */
         std::string call_method(std::string const& name, nlohmann::json::array_t const& params = nlohmann::json::array(), method_result_signal::slot_type const& slot = method_result_signal::slot_function_type()) throw(websocketpp::exception);
 
+        /* Subscribes to a record set.
+         */
         std::string subscribe(std::string const& name, nlohmann::json::array_t const& params = nlohmann::json::array(), ready_signal::slot_type const& slot = ready_signal::slot_function_type()) throw(websocketpp::exception);
 
+        /* Unsubscribes from a record set.
+         */
         void unsubscribe(std::string const& id) throw(websocketpp::exception);
 
         boost::signals2::connection on_connected(connected_signal::slot_type const& slot);

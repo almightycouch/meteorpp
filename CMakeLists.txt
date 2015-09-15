@@ -9,7 +9,7 @@ set(PROJECT_MAINTAINER "Mario Flach <m.flach@almightycouch.org>")
 project(${PROJECT_NAME})
 
 # set c++11 support
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
 
 # uses pkg-config to load ejdb from git submodule
 include(FindPkgConfig)
@@ -46,9 +46,25 @@ add_library(meteorpp SHARED ${METEORPP_SRC})
 # link against boost_random, boost_system & ejdb
 target_link_libraries(meteorpp ${Boost_LIBRARIES} ${Ejdb_LIBRARIES})
 
+find_program(CLDOC cldoc)
+if(CLDOC)
+    # concat CLDOC_CXX_FLAGS from CMAKE_CXX_FLAGS and INCLUDE_DIRECTORIES
+    set(CLDOC_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+    get_property(CLDOC_INCLUDE_DIRECTORIES TARGET meteorpp PROPERTY INCLUDE_DIRECTORIES)
+    foreach(CLDOC_INCLUDE_DIR ${CLDOC_INCLUDE_DIRECTORIES})
+        set(CLDOC_CXX_FLAGS "${CLDOC_CXX_FLAGS}" "-I${CLDOC_INCLUDE_DIR}")
+    endforeach()
+
+    # build the docs using cldoc
+    add_custom_target(docs COMMAND ${CLDOC} generate ${CLDOC_CXX_FLAGS} -- "${PROJECT_SOURCE_DIR}/include/meteorpp" --static --output docs WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+    # exclude from default build
+    set_target_properties(docs PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+endif()
+
 find_package(Boost COMPONENTS random system test_exec_monitor REQUIRED)
-if(${Boost_FOUND})
-    #create unit tests
+if(Boost_FOUND)
+    # create unit tests
     add_executable(tests EXCLUDE_FROM_ALL ${METEORPP_SRC} ${METEORPP_UNITTEST_SRC})
 
     # link against boost_random, boost_system boost_test_execu_monitor & ejdb
@@ -61,7 +77,7 @@ endif()
 
 # load boost program_options
 find_package(Boost COMPONENTS program_options)
-if(${Boost_FOUND})
+if(Boost_FOUND)
     # create ddp-monitor executable
     add_executable(ddp-monitor "${PROJECT_SOURCE_DIR}/examples/ddp_monitor.cpp")
 
