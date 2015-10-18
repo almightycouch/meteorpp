@@ -23,9 +23,9 @@ Quick Start
 
 Install Meteor++:
 
-    git clone git://github.com/almightycouch/meteorpp.git
+    git clone --recursive git://github.com/almightycouch/meteorpp.git
     cd meteorpp/build/
-    cmake .
+    cmake ..
     make
 
 Run the examples:
@@ -46,6 +46,7 @@ Meteor++ was built from ground up with the very same philosophy, keep things sim
 If you are familiar to Meteor, you will feel right at home.
 
 #### Integration
+
 The library is written in modern C++. It depends on following third-party libraries:
 
 * the delicious [nlohmann][] JSON library
@@ -53,15 +54,51 @@ The library is written in modern C++. It depends on following third-party librar
 * [EJDB][] <sup id="a1">[patch](#f1)</sup>, a MongoDB engine written in C
 * Zaphoyd's websocket implementation, [WebSocket++][]
 
-Most of these libraries are header-only and do not require any specific installation. However, You must install `boost_random`, `boost_system` and `ejdb` to successfully build Meteor++.
+Most of these libraries are header-only and do not require any specific installation. However, you must install `boost_random`, `boost_system` and `ejdb` to successfully build Meteor++.
 
 > In order to support features such as latency compensation and atomic operations, some files in the [EJDB][] library must be patched.
 > You can get the patch to apply</em> [here][patch]. <sup id="f1">[↩](#a1)</sup>
+
+> __Note that a fork of EJDB containing the required changes is available as a submodule.__
 
 [patch]: https://github.com/Softmotions/ejdb/compare/master...almightycouch:meteorpp.patch
 
 Though it's 2015 already, the support for C++11 is still a bit sparse.
 Do not forget to set the necessary switches to enable C++11 (e.g., `-std=c++11` for GCC and Clang).
+
+#### Installing Boost
+
+Installing [Boost] is straight forward on most systems.
+
+OSX:
+
+    brew install boost
+
+Linux:
+
+    sudo apt-get install libboost-dev libboost-program-options-dev libboost-random-dev libboost-system-dev
+
+If you require more specific informations about the installation process,
+please read this [Getting Started on Unix Variants](http://www.boost.org/doc/libs/1_59_0/more/getting_started/unix-variants.html) guide.
+
+#### Installing EJDB
+
+Installing [EJDB] is pretty easy as well as we provide the patched library as submodule.
+
+    cd ejdb/
+    mkdir build/
+    cd build/
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../dist ../
+    make && make install
+    cd ../../
+
+#### Building Meteor++
+
+Once the dependencies installed, you can build meteorpp as follow:
+
+    cd meteorpp/build/
+    cmake ..
+    make
 
 [EJDB]: http://ejdb.org/
 [Boost]: http://www.boost.org/doc/libs/
