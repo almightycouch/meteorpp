@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
     boost::po::variables_map cli;
     try {
-        boost::po::store( boost::po::command_line_parser(argc, argv).options(cmdline_options).positional(pos).run(), cli);
+        boost::po::store(boost::po::command_line_parser(argc, argv).options(cmdline_options).positional(pos).run(), cli);
     } catch(boost::po::error const& e) {
         std::cerr << "error: " << e.what() << std::endl;
     }
@@ -69,7 +69,13 @@ int main(int argc, char** argv)
         auto url = cli.count("ws") ? cli["ws"].as<std::string>() : "ws://localhost:3000/websocket";
         auto ddp = std::make_shared<meteorpp::ddp>(io);
         ddp->connect(url, [&](std::string const& session) {
-            coll = std::make_shared<meteorpp::ddp_collection>(ddp, cli["name"].as<std::string>());
+            std::string const name = cli["name"].as<std::string>();
+            std::size_t const pos = name.find(":");
+            if(pos == std::string::npos) {
+                coll = std::make_shared<meteorpp::ddp_collection>(ddp, name);
+            } else {
+                coll = std::make_shared<meteorpp::ddp_collection>(ddp, std::make_pair(name.substr(0, pos), name.substr(pos + 1)));
+            }
             coll->on_ready([&]() {
                 live_query = coll->track();
                 live_query->on_changed(std::bind(print_live_query, live_query));
