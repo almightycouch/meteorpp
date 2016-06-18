@@ -32,17 +32,49 @@
 namespace meteorpp {
     class ddp_collection : public collection
     {
+        template<bool...> struct bool_pack;
+        template<bool... bs>
+            using all_true = std::is_same<bool_pack<bs..., true>, bool_pack<true, bs...>>;
+        template<class R, class... Ts>
+            using are_all_convertible = all_true<std::is_convertible<Ts, R>::value...>;
+
+        template<typename T, typename = void>
+        struct is_iterator
+        {
+            static constexpr bool value = false;
+        };
+
+        template<typename T>
+        struct is_iterator<T, typename std::enable_if<!std::is_same<typename std::iterator_traits<T>::value_type, void>::value>::type>
+        {
+            static constexpr bool value = true;
+        };
+
         public:
         typedef boost::signals2::signal<void()> ready_signal;
 
-        template<typename ...Args>
+        template<typename iterator_t, typename = typename std::enable_if<is_iterator<iterator_t>::value>::type>
+        ddp_collection(std::shared_ptr<ddp> const& ddp, std::string const& name, iterator_t begin, iterator_t end) throw(ejdb_exception, websocketpp::exception)
+            : collection(name), _name(name), _ddp(ddp)
+        {
+            init_ddp_collection(name, nlohmann::json::array_t(begin, end));
+        }
+
+        template<typename... Args, typename = typename std::enable_if<are_all_convertible<nlohmann::json, Args...>::value>::type>
         ddp_collection(std::shared_ptr<ddp> const& ddp, std::string const& name, Args&&... args) throw(ejdb_exception, websocketpp::exception)
             : collection(name), _name(name), _ddp(ddp)
         {
             init_ddp_collection(name, { std::forward<Args>(args)... });
         }
 
-        template<typename ...Args>
+        template<typename iterator_t, typename = typename std::enable_if<is_iterator<iterator_t>::value>::type>
+        ddp_collection(std::shared_ptr<ddp> const& ddp, std::pair<std::string, std::string> const& name_pair, iterator_t begin, iterator_t end) throw(ejdb_exception, websocketpp::exception)
+            : collection(name_pair.first), _name(name_pair.first), _ddp(ddp)
+        {
+            init_ddp_collection(name_pair.second, nlohmann::json::array_t(begin, end));
+        }
+
+        template<typename... Args, typename = typename std::enable_if<are_all_convertible<nlohmann::json, Args...>::value>::type>
         ddp_collection(std::shared_ptr<ddp> const& ddp, std::pair<std::string, std::string> const& name_pair, Args&&... args) throw(ejdb_exception, websocketpp::exception)
             : collection(name_pair.first), _name(name_pair.first), _ddp(ddp)
         {
