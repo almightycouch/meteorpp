@@ -75,7 +75,12 @@ namespace meteorpp {
             }
             db = _db;
         }
-        _coll.reset(ejdbcreatecoll(_db.get(), name.c_str(), nullptr), ejdbsyncoll);
+
+        auto* ejdb_coll = ejdbcreatecoll(_db.get(), name.c_str(), nullptr);
+        if(!ejdb_coll) {
+            throw_last_ejdb_exception();
+        }
+        _coll.reset(ejdb_coll, ejdbsyncoll);
     }
 
     collection::~collection()
