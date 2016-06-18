@@ -34,6 +34,7 @@ int main(int argc, char** argv)
     boost::po::options_description hidden;
     hidden.add_options()
         ("name", boost::po::value<std::string>())
+        ("args", boost::po::value<std::vector<std::string>>())
     ;
 
     boost::po::options_description cmdline_options;
@@ -41,6 +42,7 @@ int main(int argc, char** argv)
 
     boost::po::positional_options_description pos;
     pos.add("name", 1);
+    pos.add("args", -1);
 
     boost::po::variables_map cli;
     try {
@@ -54,7 +56,7 @@ int main(int argc, char** argv)
         std::cout << "ddp-monitor 0.1.1" << std::endl;
         return 0;
     } else if(cli.count("help") || !cli.count("name")) {
-        std::cout << "usage: " << argv[0] << " <name> [arg1] [arg2] ... [argN] [options]" << std::endl;
+        std::cout << "usage: " << argv[0] << " [options] <name> [arg1] [arg2] ... [argN]" << std::endl;
         std::cout << std::endl;
         std::cout << desc << std::endl;
         return 0;
@@ -70,6 +72,10 @@ int main(int argc, char** argv)
         auto ddp = std::make_shared<meteorpp::ddp>(io);
         ddp->connect(url, [&](std::string const& session) {
             std::string const name = cli["name"].as<std::string>();
+            std::vector<std::string> params;
+            if(cli.count("args")) {
+                params = cli["args"].as<std::vector<std::string>>();
+            }
             std::size_t const pos = name.find(":");
             if(pos == std::string::npos) {
                 coll = std::make_shared<meteorpp::ddp_collection>(ddp, name);
