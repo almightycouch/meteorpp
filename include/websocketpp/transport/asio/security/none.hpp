@@ -30,6 +30,7 @@
 
 #include <websocketpp/uri.hpp>
 
+#include <websocketpp/transport/base/connection.hpp>
 #include <websocketpp/transport/asio/security/base.hpp>
 
 #include <websocketpp/common/asio.hpp>
@@ -170,6 +171,10 @@ protected:
         m_socket = lib::make_shared<lib::asio::ip::tcp::socket>(
             lib::ref(*service));
 
+        if (m_socket_init_handler) {
+            m_socket_init_handler(m_hdl, *m_socket);
+        }
+
         m_state = READY;
 
         return lib::error_code();
@@ -203,10 +208,6 @@ protected:
             return;
         }
 
-        if (m_socket_init_handler) {
-            m_socket_init_handler(m_hdl,*m_socket);
-        }
-
         m_state = READING;
 
         callback(lib::error_code());
@@ -236,11 +237,21 @@ protected:
     }
 
     /// Cancel all async operations on this socket
-    void cancel_socket() {
-        m_socket->cancel();
+    /**
+     * Attempts to cancel all async operations on this socket and reports any
+     * failures.
+     *
+     * NOTE: Windows XP and earlier do not support socket cancellation.
+     *
+     * @return The error that occurred, if any.
+     */
+    lib::asio::error_code cancel_socket() {
+        lib::asio::error_code ec;
+        m_socket->cancel(ec);
+        return ec;
     }
 
-    void async_shutdown(socket_shutdown_handler h) {
+    void async_shutdown(socket::shutdown_handler h) {
         lib::asio::error_code ec;
         m_socket->shutdown(lib::asio::ip::tcp::socket::shutdown_both, ec);
         h(ec);
@@ -250,21 +261,40 @@ protected:
         return lib::error_code();
     }
 
+public:
     /// Translate any security policy specific information about an error code
     /**
-     * Translate_ec takes a boost error code and attempts to convert its value
-     * to an appropriate websocketpp error code. The plain socket policy does
-     * not presently provide any additional information so all errors will be
-     * reported as the generic transport pass_through error.
+     * Translate_ec takes an Asio error code and attempts to convert its value 
+     * to an appropriate websocketpp error code. In the case that the Asio and
+     * Websocketpp error types are the same (such as using boost::asio and
+     * boost::system_error or using standalone asio and std::system_error the
+     * code will be passed through natively.
+     *
+     * In the case of a mismatch (boost::asio with std::system_error) a
+     * translated code will be returned. The plain socket policy does not have 
+     * any additional information so all such errors will be reported as the
+     * generic transport pass_through error.
      *
      * @since 0.3.0
      *
      * @param ec The error code to translate_ec
      * @return The translated error code
      */
-    lib::error_code translate_ec(lib::asio::error_code) {
+    template <typename ErrorCodeType>
+    static
+    lib::error_code translate_ec(ErrorCodeType) {
         // We don't know any more information about this error so pass through
         return make_error_code(transport::error::pass_through);
+    }
+
+    static
+    /// Overload of translate_ec to catch cases where lib::error_code is the 
+    /// same type as lib::asio::error_code
+    lib::error_code translate_ec(lib::error_code ec) {
+        // We don't know any more information about this error, but the error is
+        // the same type as the one we are translating to, so pass through
+        // untranslated.
+        return ec;
     }
 private:
     enum state {
